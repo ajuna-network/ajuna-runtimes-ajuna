@@ -3,11 +3,14 @@
 endpoint:
   - wss://ajuna.api.onfinality.io/public-ws
   - wss://ajuna.public.curie.radiumblock.co/ws
+  - wss://ajuna.ibp.network
+  - wss://ajuna.dotters.network
+
 mock-signature-host: true
 block: ${env.AJUNA_PARACHAIN_BLOCK_NUMBER}
 db: ./chopsticks/ajuna-parachain.db.sqlite
 runtime-log-level: 5
-#wasm-override: target/release/wbuild/ajuna-runtime/ajuna_runtime.compact.compressed.wasm
+wasm-override: target/release/wbuild/ajuna-runtime/ajuna_runtime.compact.compressed.wasm
 
 # Once we have governance we want to make Alice single councillor and technical committee member.
 import-storage:
@@ -31,3 +34,8 @@ import-storage:
   TechnicalCommittee:
     Members:
       - 5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY
+  Assets:
+    Account:
+      - [ [ 1984, 5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY ], { balance: 10000000000000 } ]
+      - [ [ 1337, 5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY ], { balance: 10000000000000 } ]
+    Asset: [[[1984], { supply: 10000000000000 }], [[1337], { supply: 10000000000000 }]]
