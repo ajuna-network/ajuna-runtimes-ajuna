@@ -29,6 +29,9 @@ mod tx_payment;
 mod weights;
 pub mod xcm_config;
 
+#[cfg(feature = "runtime-benchmarks")]
+mod benchmark_helpers;
+
 use crate::{
 	assets::{Native, NativeAndAssets},
 	gov::EnsureRootOrMoreThanHalfCouncil,
@@ -521,7 +524,7 @@ impl pallet_treasury::Config for Runtime {
 	type BalanceConverter = AssetRate;
 	type PayoutPeriod = SpendPayoutPeriod;
 	#[cfg(feature = "runtime-benchmarks")]
-	type BenchmarkHelper = ();
+	type BenchmarkHelper = benchmark_helpers::treasury::TreasuryArguments;
 }
 
 impl pallet_asset_rate::Config for Runtime {
@@ -533,7 +536,7 @@ impl pallet_asset_rate::Config for Runtime {
 	type Currency = Balances;
 	type AssetKind = <Runtime as pallet_treasury::Config>::AssetKind;
 	#[cfg(feature = "runtime-benchmarks")]
-	type BenchmarkHelper = polkadot_runtime_common::impls::benchmarks::AssetRateArguments;
+	type BenchmarkHelper = benchmark_helpers::asset_rate::AssetRateArguments;
 }
 
 parameter_types! {
