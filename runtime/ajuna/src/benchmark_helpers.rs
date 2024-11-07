@@ -16,11 +16,9 @@
 
 pub mod treasury {
 	use crate::AccountId;
-	use core::marker::PhantomData;
-	use frame_support::traits::{fungible::NativeOrWithId, Get};
+	use frame_support::traits::fungible::NativeOrWithId;
 	use pallet_treasury::ArgumentsFactory as TreasuryArgumentsFactory;
 	use parachains_common::AssetIdForTrustBackedAssets;
-	use sp_core::{ConstU32, ConstU8};
 
 	pub type AssetKind = NativeOrWithId<AssetIdForTrustBackedAssets>;
 
