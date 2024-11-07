@@ -37,5 +37,8 @@ import-storage:
   Assets:
     Account:
       - [ [ 1984, 5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY ], { balance: 10000000000000 } ]
+      # Treasury account
+      - [ [ 1984, aUrrXg7ByxW6YbyEQYcKEqigFtmB5D9YVEw9auYVej8xsxWtw ], { balance: 10000000000000 } ]
       - [ [ 1337, 5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY ], { balance: 10000000000000 } ]
-    Asset: [[[1984], { supply: 10000000000000 }], [[1337], { supply: 10000000000000 }]]
+      - [ [ 1337, aUrrXg7ByxW6YbyEQYcKEqigFtmB5D9YVEw9auYVej8xsxWtw ], { balance: 10000000000000 } ]
+    Asset: [[[1984], { supply: 20000000000000 }], [[1337], { supply: 20000000000000 }]]
