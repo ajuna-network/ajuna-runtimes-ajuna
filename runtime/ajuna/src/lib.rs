@@ -46,7 +46,9 @@ use frame_support::{
 	parameter_types,
 	traits::{
 		fungible::{HoldConsideration, NativeOrWithId},
-		tokens::{imbalance::ResolveAssetTo, pay::PayAssetFromAccount},
+		tokens::{
+			imbalance::ResolveAssetTo, pay::PayAssetFromAccount, UnityAssetBalanceConversion,
+		},
 		AsEnsureOriginWithArg, ConstBool, Contains, LinearStoragePrice,
 	},
 	weights::{
@@ -360,7 +362,6 @@ impl Contains<RuntimeCall> for BaseCallFilter {
 			RuntimeCall::AssetRegistry(_) => true,
 			RuntimeCall::PoolAssets(_) => true,
 			RuntimeCall::AssetConversion(_) => true,
-			RuntimeCall::AssetRate(_) => true,
 			// nft
 			RuntimeCall::Nft(NftsCall::set_attribute { namespace, .. })
 			if namespace == &AttributeNamespace::CollectionOwner =>
@@ -521,22 +522,14 @@ impl pallet_treasury::Config for Runtime {
 	type Beneficiary = Self::AccountId;
 	type BeneficiaryLookup = IdentityLookup<Self::Beneficiary>;
 	type Paymaster = PayAssetFromAccount<NativeAndAssets, TreasuryAccount>;
-	type BalanceConverter = AssetRate;
+	// The balance conversion is only needed the check if the proposed spend is not too
+	// high for a given origin's track. As we use Gov1, we have no notion of those tracks,
+	// and the associated maximum balance. Hence, this check will always return true, and we
+	// can use the simple unity conversion.
+	type BalanceConverter = UnityAssetBalanceConversion;
 	type PayoutPeriod = SpendPayoutPeriod;
 	#[cfg(feature = "runtime-benchmarks")]
 	type BenchmarkHelper = benchmark_helpers::treasury::TreasuryArguments;
-}
-
-impl pallet_asset_rate::Config for Runtime {
-	type WeightInfo = weights::pallet_asset_rate::WeightInfo<Runtime>;
-	type RuntimeEvent = RuntimeEvent;
-	type CreateOrigin = EnsureRoot<AccountId>;
-	type RemoveOrigin = EnsureRoot<AccountId>;
-	type UpdateOrigin = EnsureRoot<AccountId>;
-	type Currency = Balances;
-	type AssetKind = <Runtime as pallet_treasury::Config>::AssetKind;
-	#[cfg(feature = "runtime-benchmarks")]
-	type BenchmarkHelper = benchmark_helpers::asset_rate::AssetRateArguments;
 }
 
 parameter_types! {
@@ -986,7 +979,6 @@ construct_runtime!(
 		PoolAssets: pallet_assets::<Instance2> = 92,
 		AssetConversion: pallet_asset_conversion = 93,
 		AssetConversionTxPayment: pallet_asset_conversion_tx_payment = 94,
-		AssetRate: pallet_asset_rate = 95,
 	}
 );
 
@@ -1004,7 +996,6 @@ mod benches {
 		[pallet_assets, Assets]
 		// [pallet_assets, PoolAssets] // writes to same file, wait for ommni bencher to fix this
 		[pallet_asset_conversion, AssetConversion]
-		[pallet_asset_rate, AssetRate]
 		[pallet_balances, Balances]
 		[pallet_collator_selection, CollatorSelection]
 		[pallet_collective, Council]
