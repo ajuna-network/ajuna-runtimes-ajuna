@@ -29,12 +29,9 @@ pub mod treasury {
 	///
 	/// This is slightly different from Polkadot's implementation, which uses a
 	/// [`VersionedLocatableAsset`] for the AssetId, as the asset lives on another chain.
-	pub struct TreasuryArguments<Parents = ConstU8<0>, ParaId = ConstU32<0>>(
-		PhantomData<(Parents, ParaId)>,
-	);
-	impl<Parents: Get<u8>, ParaId: Get<u32>> TreasuryArgumentsFactory<AssetKind, AccountId>
-		for TreasuryArguments<Parents, ParaId>
-	{
+	pub struct TreasuryArguments;
+
+	impl TreasuryArgumentsFactory<AssetKind, AccountId> for TreasuryArguments {
 		fn create_asset_kind(seed: u32) -> AssetKind {
 			AssetKind::WithId(seed)
 		}
