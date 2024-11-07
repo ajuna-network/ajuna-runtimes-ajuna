@@ -29,6 +29,9 @@ mod tx_payment;
 mod weights;
 pub mod xcm_config;
 
+#[cfg(feature = "runtime-benchmarks")]
+mod benchmark_helpers;
+
 use crate::{
 	assets::{Native, NativeAndAssets},
 	gov::EnsureRootOrMoreThanHalfCouncil,
@@ -42,8 +45,10 @@ use frame_support::{
 	pallet_prelude::ConstU32,
 	parameter_types,
 	traits::{
-		fungible::HoldConsideration,
-		tokens::{imbalance::ResolveAssetTo, PayFromAccount, UnityAssetBalanceConversion},
+		fungible::{HoldConsideration, NativeOrWithId},
+		tokens::{
+			imbalance::ResolveAssetTo, pay::PayAssetFromAccount, UnityAssetBalanceConversion,
+		},
 		AsEnsureOriginWithArg, ConstBool, Contains, LinearStoragePrice,
 	},
 	weights::{
@@ -91,7 +96,9 @@ use weights::{BlockExecutionWeight, ExtrinsicBaseWeight, RocksDbWeight};
 // XCM Imports
 use staging_xcm::latest::prelude::BodyId;
 
-use parachains_common::{message_queue::NarrowOriginToSibling, BlockNumber, Hash, Header};
+use parachains_common::{
+	message_queue::NarrowOriginToSibling, AssetIdForTrustBackedAssets, BlockNumber, Hash, Header,
+};
 
 parameter_types! {
 	pub const OneDay: BlockNumber = DAYS;
@@ -511,14 +518,18 @@ impl pallet_treasury::Config for Runtime {
 	type SpendFunds = ();
 	type MaxApprovals = frame_support::traits::ConstU32<100>;
 	type SpendOrigin = EnsureWithSuccess<EnsureRoot<AccountId>, AccountId, MaxBalance>;
-	type AssetKind = ();
+	type AssetKind = NativeOrWithId<AssetIdForTrustBackedAssets>;
 	type Beneficiary = Self::AccountId;
 	type BeneficiaryLookup = IdentityLookup<Self::Beneficiary>;
-	type Paymaster = PayFromAccount<Balances, TreasuryAccount>;
+	type Paymaster = PayAssetFromAccount<NativeAndAssets, TreasuryAccount>;
+	// The balance conversion to the native balance is only needed to check if the proposed spend
+	// is not too high for a given origin's track. As we use Gov1, we have no notion of those
+	// tracks, and their associated maximum balance. Hence, this check will always return true,
+	// which implies that we can use the simple unity conversion.
 	type BalanceConverter = UnityAssetBalanceConversion;
 	type PayoutPeriod = SpendPayoutPeriod;
 	#[cfg(feature = "runtime-benchmarks")]
-	type BenchmarkHelper = ();
+	type BenchmarkHelper = benchmark_helpers::treasury::TreasuryArguments;
 }
 
 parameter_types! {
@@ -1000,7 +1011,7 @@ mod benches {
 		[pallet_scheduler, Scheduler]
 		[pallet_session, SessionBench::<Runtime>]
 		[pallet_timestamp, Timestamp]
-		// [pallet_treasury, Treasury] // treasury config is broken, needs fixes
+		[pallet_treasury, Treasury]
 		[pallet_utility, Utility]
 	);
 	// Use this section if you want to benchmark individual pallets
