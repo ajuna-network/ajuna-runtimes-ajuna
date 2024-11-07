@@ -36,6 +36,7 @@ frame-try-runtime                          = { workspace = true, optional = true
 pallet-assets                              = { workspace = true }
 pallet-asset-conversion                    = { workspace = true }
 pallet-asset-conversion-tx-payment         = { workspace = true }
+pallet-asset-rate                          = { workspace = true }
 pallet-aura                                = { workspace = true }
 pallet-authorship                          = { workspace = true }
 pallet-balances                            = { workspace = true }
@@ -144,6 +145,7 @@ std = [
     "orml-pallets-benchmarking?/std",
     "pallet-asset-conversion/std",
     "pallet-asset-conversion-tx-payment/std",
+    "pallet-asset-rate/std",
     "pallet-assets/std",
     "pallet-aura/std",
     "pallet-authorship/std",
@@ -216,6 +218,7 @@ runtime-benchmarks = [
     "orml-xtokens/runtime-benchmarks",
     "orml-pallets-benchmarking/runtime-benchmarks",
     "pallet-asset-conversion/runtime-benchmarks",
+    "pallet-asset-rate/runtime-benchmarks",
     "pallet-assets/runtime-benchmarks",
     "pallet-balances/runtime-benchmarks",
     "pallet-collator-selection/runtime-benchmarks",
@@ -263,6 +266,7 @@ try-runtime = [
     "orml-xtokens/try-runtime",
     "pallet-asset-conversion/try-runtime",
     "pallet-asset-conversion-tx-payment/try-runtime",
+    "pallet-asset-rate/try-runtime",
     "pallet-assets/try-runtime",
     "pallet-aura/try-runtime",
     "pallet-authorship/try-runtime",

@@ -42,8 +42,8 @@ use frame_support::{
 	pallet_prelude::ConstU32,
 	parameter_types,
 	traits::{
-		fungible::HoldConsideration,
-		tokens::{imbalance::ResolveAssetTo, PayFromAccount, UnityAssetBalanceConversion},
+		fungible::{HoldConsideration, NativeOrWithId},
+		tokens::{imbalance::ResolveAssetTo, pay::PayAssetFromAccount},
 		AsEnsureOriginWithArg, ConstBool, Contains, LinearStoragePrice,
 	},
 	weights::{
@@ -91,7 +91,9 @@ use weights::{BlockExecutionWeight, ExtrinsicBaseWeight, RocksDbWeight};
 // XCM Imports
 use staging_xcm::latest::prelude::BodyId;
 
-use parachains_common::{message_queue::NarrowOriginToSibling, BlockNumber, Hash, Header};
+use parachains_common::{
+	message_queue::NarrowOriginToSibling, AssetIdForTrustBackedAssets, BlockNumber, Hash, Header,
+};
 
 parameter_types! {
 	pub const OneDay: BlockNumber = DAYS;
@@ -355,6 +357,7 @@ impl Contains<RuntimeCall> for BaseCallFilter {
 			RuntimeCall::AssetRegistry(_) => true,
 			RuntimeCall::PoolAssets(_) => true,
 			RuntimeCall::AssetConversion(_) => true,
+			RuntimeCall::AssetRate(_) => true,
 			// nft
 			RuntimeCall::Nft(NftsCall::set_attribute { namespace, .. })
 			if namespace == &AttributeNamespace::CollectionOwner =>
@@ -511,14 +514,26 @@ impl pallet_treasury::Config for Runtime {
 	type SpendFunds = ();
 	type MaxApprovals = frame_support::traits::ConstU32<100>;
 	type SpendOrigin = EnsureWithSuccess<EnsureRoot<AccountId>, AccountId, MaxBalance>;
-	type AssetKind = ();
+	type AssetKind = NativeOrWithId<AssetIdForTrustBackedAssets>;
 	type Beneficiary = Self::AccountId;
 	type BeneficiaryLookup = IdentityLookup<Self::Beneficiary>;
-	type Paymaster = PayFromAccount<Balances, TreasuryAccount>;
-	type BalanceConverter = UnityAssetBalanceConversion;
+	type Paymaster = PayAssetFromAccount<NativeAndAssets, TreasuryAccount>;
+	type BalanceConverter = AssetRate;
 	type PayoutPeriod = SpendPayoutPeriod;
 	#[cfg(feature = "runtime-benchmarks")]
 	type BenchmarkHelper = ();
+}
+
+impl pallet_asset_rate::Config for Runtime {
+	type WeightInfo = weights::pallet_asset_rate::WeightInfo<Runtime>;
+	type RuntimeEvent = RuntimeEvent;
+	type CreateOrigin = EnsureRoot<AccountId>;
+	type RemoveOrigin = EnsureRoot<AccountId>;
+	type UpdateOrigin = EnsureRoot<AccountId>;
+	type Currency = Balances;
+	type AssetKind = <Runtime as pallet_treasury::Config>::AssetKind;
+	#[cfg(feature = "runtime-benchmarks")]
+	type BenchmarkHelper = polkadot_runtime_common::impls::benchmarks::AssetRateArguments;
 }
 
 parameter_types! {
@@ -968,6 +983,7 @@ construct_runtime!(
 		PoolAssets: pallet_assets::<Instance2> = 92,
 		AssetConversion: pallet_asset_conversion = 93,
 		AssetConversionTxPayment: pallet_asset_conversion_tx_payment = 94,
+		AssetRate: pallet_asset_rate = 95,
 	}
 );
 
