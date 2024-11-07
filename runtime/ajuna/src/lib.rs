@@ -1020,7 +1020,7 @@ mod benches {
 		[pallet_scheduler, Scheduler]
 		[pallet_session, SessionBench::<Runtime>]
 		[pallet_timestamp, Timestamp]
-		[pallet_treasury, Treasury] // treasury config is broken, needs fixes
+		[pallet_treasury, Treasury]
 		[pallet_utility, Utility]
 	);
 	// Use this section if you want to benchmark individual pallets
