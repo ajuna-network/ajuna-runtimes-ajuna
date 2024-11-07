@@ -14,23 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-pub mod asset_rate {
-	use frame_support::traits::fungible::NativeOrWithId;
-	use pallet_asset_rate::AssetKindFactory;
-	use parachains_common::AssetIdForTrustBackedAssets;
-
-	/// Provides a factory method for the [`NativeOrWithId<AssetIdForTrustBackedAssets>`].
-	pub struct AssetRateArguments;
-
-	pub type AssetKind = NativeOrWithId<AssetIdForTrustBackedAssets>;
-
-	impl AssetKindFactory<AssetKind> for AssetRateArguments {
-		fn create_asset_kind(seed: u32) -> AssetKind {
-			AssetKind::WithId(seed)
-		}
-	}
-}
-
 pub mod treasury {
 	use crate::AccountId;
 	use core::marker::PhantomData;
