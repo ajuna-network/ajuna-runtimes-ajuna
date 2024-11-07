@@ -522,10 +522,10 @@ impl pallet_treasury::Config for Runtime {
 	type Beneficiary = Self::AccountId;
 	type BeneficiaryLookup = IdentityLookup<Self::Beneficiary>;
 	type Paymaster = PayAssetFromAccount<NativeAndAssets, TreasuryAccount>;
-	// The balance conversion is only needed the check if the proposed spend is not too
-	// high for a given origin's track. As we use Gov1, we have no notion of those tracks,
-	// and the associated maximum balance. Hence, this check will always return true, and we
-	// can use the simple unity conversion.
+	// The balance conversion to the native balance is only needed to check if the proposed spend
+	// is not too high for a given origin's track. As we use Gov1, we have no notion of those
+	// tracks, and their associated maximum balance. Hence, this check will always return true,
+	// which implies that we can use the simple unity conversion.
 	type BalanceConverter = UnityAssetBalanceConversion;
 	type PayoutPeriod = SpendPayoutPeriod;
 	#[cfg(feature = "runtime-benchmarks")]
