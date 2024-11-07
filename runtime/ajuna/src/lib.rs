@@ -1004,6 +1004,7 @@ mod benches {
 		[pallet_assets, Assets]
 		// [pallet_assets, PoolAssets] // writes to same file, wait for ommni bencher to fix this
 		[pallet_asset_conversion, AssetConversion]
+		[pallet_asset_rate, AssetRate]
 		[pallet_balances, Balances]
 		[pallet_collator_selection, CollatorSelection]
 		[pallet_collective, Council]
@@ -1019,7 +1020,7 @@ mod benches {
 		[pallet_scheduler, Scheduler]
 		[pallet_session, SessionBench::<Runtime>]
 		[pallet_timestamp, Timestamp]
-		// [pallet_treasury, Treasury] // treasury config is broken, needs fixes
+		[pallet_treasury, Treasury] // treasury config is broken, needs fixes
 		[pallet_utility, Utility]
 	);
 	// Use this section if you want to benchmark individual pallets
