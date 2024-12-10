@@ -100,6 +100,7 @@ orml-xcm-support = { workspace = true }
 orml-xtokens = { workspace = true }
 
 # Ajuna Pallets
+ajuna-primitives                          = { workspace = true }
 pallet-ajuna-affiliates                   = { workspace = true }
 pallet-ajuna-awesome-avatars              = { workspace = true }
 pallet-ajuna-awesome-avatars-benchmarking = { workspace = true, optional = true }
@@ -193,6 +194,7 @@ std = [
     "pallet-asset-registry/std",
     "xcm-primitives/std",
     # ajuna
+    "ajuna-primitives/std",
     "pallet-ajuna-affiliates/std",
     "pallet-ajuna-awesome-avatars/std",
     "pallet-ajuna-awesome-avatars-benchmarking?/std",

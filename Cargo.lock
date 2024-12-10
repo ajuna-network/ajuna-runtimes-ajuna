@@ -94,6 +94,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "ajuna-fee-handler"
+version = "0.15.0"
+source = "git+https://github.com/ajuna-network/ajuna-pallets.git?branch=cl/pay-in-other-assets#4faf79ba26bb1055f201f2cc26643473ed2e0d2f"
+dependencies = [
+ "frame-support",
+ "frame-system",
+ "log",
+ "pallet-assets",
+ "pallet-balances",
+ "parity-scale-codec",
+ "scale-info",
+ "sp-runtime",
+]
+
+[[package]]
 name = "ajuna-node"
 version = "0.8.2"
 dependencies = [
@@ -172,9 +187,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "ajuna-primitives"
+version = "0.15.0"
+source = "git+https://github.com/ajuna-network/ajuna-pallets.git?branch=cl/pay-in-other-assets#4faf79ba26bb1055f201f2cc26643473ed2e0d2f"
+dependencies = [
+ "ajuna-fee-handler",
+ "frame-support",
+ "parity-scale-codec",
+ "scale-info",
+ "sp-std",
+]
+
+[[package]]
 name = "ajuna-runtime"
 version = "0.8.2"
 dependencies = [
+ "ajuna-primitives",
  "assets-common",
  "cumulus-pallet-aura-ext",
  "cumulus-pallet-parachain-system",
@@ -6451,7 +6479,7 @@ dependencies = [
 [[package]]
 name = "orml-pallets-benchmarking"
 version = "0.15.0"
-source = "git+https://github.com/ajuna-network/ajuna-pallets.git?tag=v0.15.0#fedd69cc56fbec86ac1c87ebcd64bedf8f890d65"
+source = "git+https://github.com/ajuna-network/ajuna-pallets.git?branch=cl/pay-in-other-assets#4faf79ba26bb1055f201f2cc26643473ed2e0d2f"
 dependencies = [
  "frame-benchmarking",
  "frame-support",
@@ -6579,12 +6607,16 @@ checksum = "b15813163c1d831bf4a13c3610c05c0d03b39feb07f7e09fa234dac9b15aaf39"
 [[package]]
 name = "pallet-ajuna-affiliates"
 version = "0.15.0"
-source = "git+https://github.com/ajuna-network/ajuna-pallets.git?tag=v0.15.0#fedd69cc56fbec86ac1c87ebcd64bedf8f890d65"
+source = "git+https://github.com/ajuna-network/ajuna-pallets.git?branch=cl/pay-in-other-assets#4faf79ba26bb1055f201f2cc26643473ed2e0d2f"
 dependencies = [
+ "ajuna-primitives",
+ "frame-benchmarking",
  "frame-support",
  "frame-system",
+ "pallet-balances",
  "parity-scale-codec",
  "scale-info",
+ "sp-io",
  "sp-runtime",
  "sp-std",
 ]
@@ -6592,8 +6624,9 @@ dependencies = [
 [[package]]
 name = "pallet-ajuna-awesome-avatars"
 version = "0.15.0"
-source = "git+https://github.com/ajuna-network/ajuna-pallets.git?tag=v0.15.0#fedd69cc56fbec86ac1c87ebcd64bedf8f890d65"
+source = "git+https://github.com/ajuna-network/ajuna-pallets.git?branch=cl/pay-in-other-assets#4faf79ba26bb1055f201f2cc26643473ed2e0d2f"
 dependencies = [
+ "ajuna-primitives",
  "frame-benchmarking",
  "frame-support",
  "frame-system",
@@ -6612,8 +6645,9 @@ dependencies = [
 [[package]]
 name = "pallet-ajuna-awesome-avatars-benchmarking"
 version = "0.15.0"
-source = "git+https://github.com/ajuna-network/ajuna-pallets.git?tag=v0.15.0#fedd69cc56fbec86ac1c87ebcd64bedf8f890d65"
+source = "git+https://github.com/ajuna-network/ajuna-pallets.git?branch=cl/pay-in-other-assets#4faf79ba26bb1055f201f2cc26643473ed2e0d2f"
 dependencies = [
+ "ajuna-primitives",
  "frame-benchmarking",
  "frame-support",
  "frame-system",
@@ -6636,12 +6670,17 @@ dependencies = [
 [[package]]
 name = "pallet-ajuna-nft-transfer"
 version = "0.15.0"
-source = "git+https://github.com/ajuna-network/ajuna-pallets.git?tag=v0.15.0#fedd69cc56fbec86ac1c87ebcd64bedf8f890d65"
+source = "git+https://github.com/ajuna-network/ajuna-pallets.git?branch=cl/pay-in-other-assets#4faf79ba26bb1055f201f2cc26643473ed2e0d2f"
 dependencies = [
+ "ajuna-primitives",
+ "frame-benchmarking",
  "frame-support",
  "frame-system",
+ "pallet-balances",
+ "pallet-nfts",
  "parity-scale-codec",
  "scale-info",
+ "sp-io",
  "sp-runtime",
  "sp-std",
 ]
@@ -6649,14 +6688,18 @@ dependencies = [
 [[package]]
 name = "pallet-ajuna-tournament"
 version = "0.15.0"
-source = "git+https://github.com/ajuna-network/ajuna-pallets.git?tag=v0.15.0#fedd69cc56fbec86ac1c87ebcd64bedf8f890d65"
+source = "git+https://github.com/ajuna-network/ajuna-pallets.git?branch=cl/pay-in-other-assets#4faf79ba26bb1055f201f2cc26643473ed2e0d2f"
 dependencies = [
+ "ajuna-primitives",
+ "frame-benchmarking",
  "frame-support",
  "frame-system",
  "log",
+ "pallet-balances",
  "parity-scale-codec",
  "scale-info",
  "sp-arithmetic",
+ "sp-io",
  "sp-runtime",
  "sp-std",
 ]

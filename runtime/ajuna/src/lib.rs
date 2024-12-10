@@ -36,6 +36,7 @@ use crate::{
 	assets::{Native, NativeAndAssets},
 	gov::EnsureRootOrMoreThanHalfCouncil,
 };
+use ajuna_primitives::fee_handler::{NativeGameFeeHandler, WithdrawNative};
 use cumulus_pallet_parachain_system::RelaychainDataProvider;
 use cumulus_primitives_core::AggregateMessageOrigin;
 use frame_support::{
@@ -62,6 +63,7 @@ use frame_system::{
 	pallet_prelude::BlockNumberFor,
 	EnsureRoot, EnsureSigned, EnsureWithSuccess,
 };
+use pallet_ajuna_awesome_avatars::{impls::AffiliateUnlockParams, types::Avatar, AvatarRankerFor};
 use pallet_identity::legacy::IdentityInfo;
 use pallet_nfts::{AttributeNamespace, Call as NftsCall};
 use parity_scale_codec::{Decode, Encode, MaxEncodedLen};
@@ -372,6 +374,9 @@ impl Contains<RuntimeCall> for BaseCallFilter {
 			RuntimeCall::Nft(_) => true,
 			// ajuna
 			RuntimeCall::AwesomeAvatars(_) => true,
+			RuntimeCall::NftTransfer(_) => true,
+			RuntimeCall::AffiliatesAAA(_) => true,
+			RuntimeCall::TournamentAAA(_) => true,
 		}
 	}
 }
@@ -799,12 +804,16 @@ impl pallet_ajuna_awesome_avatars::Config for Runtime {
 	type RuntimeEvent = RuntimeEvent;
 	type Currency = Balances;
 	type Randomness = Randomness;
-	type KeyLimit = KeyLimit;
-	type ValueLimit = ValueLimit;
-	type NftHandler = NftTransfer;
 	type FeeChainMaxLength = AffiliateMaxLevel;
 	type AffiliateHandler = AffiliatesAAA;
 	type TournamentHandler = TournamentAAA;
+	type FeeHandler = NativeGameFeeHandler<
+		AccountId,
+		Balances,
+		WithdrawNative<Runtime>,
+		AffiliatesAAA,
+		TournamentAAA,
+	>;
 	type WeightInfo = ();
 }
 
@@ -874,11 +883,17 @@ impl pallet_ajuna_nft_transfer::Config for Runtime {
 	type PalletId = NftTransferPalletId;
 	type RuntimeEvent = RuntimeEvent;
 	type CollectionId = CollectionId;
+	type Item = Avatar<BlockNumber>;
 	type ItemId = Hash;
 	type ItemConfig = pallet_nfts::ItemConfig;
+	type AssetManager = AwesomeAvatars;
+	type AccountManager = AwesomeAvatars;
 	type KeyLimit = KeyLimit;
 	type ValueLimit = ValueLimit;
 	type NftHelper = Nft;
+	type WeightInfo = ();
+	#[cfg(feature = "runtime-benchmarks")]
+	type BenchmarkHelper = ();
 }
 
 parameter_types! {
@@ -888,9 +903,16 @@ parameter_types! {
 pub type AffiliatesInstanceAAA = pallet_ajuna_affiliates::Instance1;
 impl pallet_ajuna_affiliates::Config<AffiliatesInstanceAAA> for Runtime {
 	type RuntimeEvent = RuntimeEvent;
+	type Currency = Balances;
+	type WhitelistKey = ();
+	type AccountManager = AwesomeAvatars;
 	type RuleIdentifier = pallet_ajuna_awesome_avatars::types::AffiliateMethods;
-	type RuntimeRule = pallet_ajuna_awesome_avatars::FeePropagationOf<Runtime>;
 	type AffiliateMaxLevel = AffiliateMaxLevel;
+	type UnlockParameters = AffiliateUnlockParams<AccountId>;
+	type AffiliatesUnlockRules = AwesomeAvatars;
+	type WeightInfo = ();
+	#[cfg(feature = "runtime-benchmarks")]
+	type BenchmarkHelper = ();
 }
 
 parameter_types! {
@@ -903,10 +925,16 @@ impl pallet_ajuna_tournament::Config<TournamentInstanceAAA> for Runtime {
 	type PalletId = TournamentPalletId1;
 	type RuntimeEvent = RuntimeEvent;
 	type Currency = Balances;
-	type SeasonId = pallet_ajuna_awesome_avatars::types::SeasonId;
+	type TournamentCategoryId = pallet_ajuna_awesome_avatars::types::SeasonId;
 	type EntityId = pallet_ajuna_awesome_avatars::AvatarIdOf<Runtime>;
 	type RankedEntity = pallet_ajuna_awesome_avatars::types::Avatar<BlockNumberFor<Runtime>>;
+	type EntityRanker = AvatarRankerFor<Runtime>;
+	type AccountManager = AwesomeAvatars;
+	type AssetManager = AwesomeAvatars;
 	type MinimumTournamentPhaseDuration = MinimumTournamentPhaseDuration;
+	type WeightInfo = ();
+	#[cfg(feature = "runtime-benchmarks")]
+	type BenchmarkHelper = ();
 }
 
 // Create the runtime by composing the FRAME pallets that were previously configured.
