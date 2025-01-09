@@ -125,9 +125,9 @@ impl pallet_membership::Config<TechnicalCommitteeMembershipInstance> for Runtime
 parameter_types! {
 	pub const ThreeDays: BlockNumber = 3 * DAYS;
 	pub const SevenDays: BlockNumber = 7 * DAYS;
+	pub const FourteenDays: BlockNumber = 14 * DAYS;
 	pub const TwentyEightDays: BlockNumber = 28 * DAYS;
-	pub const ThirtyDays: BlockNumber = 30 * DAYS;
-	pub EnactmentPeriod: BlockNumber = 7 * DAYS;
+	pub const EnactmentPeriod: BlockNumber = 7 * DAYS;
 	pub const MinimumDeposit: Balance = 500 * AJUN;
 }
 
@@ -138,8 +138,10 @@ impl pallet_democracy::Config for Runtime {
 	type Preimages = pallet_preimage::Pallet<Runtime>;
 	type Currency = pallet_balances::Pallet<Runtime>;
 	type EnactmentPeriod = EnactmentPeriod;
-	type LaunchPeriod = SevenDays;
-	type VotingPeriod = TwentyEightDays;
+	// LaunchPeriod should not be shorter than VotingPeriod. Otherwise,
+	// we risk that the ongoing referenda might infinitely grow.
+	type LaunchPeriod = FourteenDays;
+	type VotingPeriod = FourteenDays;
 	type VoteLockingPeriod = EnactmentPeriod;
 	type MinimumDeposit = MinimumDeposit;
 	type InstantAllowed = ConstBool<true>;
