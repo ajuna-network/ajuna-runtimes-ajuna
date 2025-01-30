@@ -14,7 +14,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-use crate::{weights, AccountId, AssetConversion, Assets, Balance, Balances, ExistentialDeposit, PoolAssets, Runtime, RuntimeEvent, RuntimeOrigin, TreasuryAccount, AJUN, MILLI_AJUN};
+use crate::{
+	weights, AccountId, AssetConversion, Assets, Balance, Balances, ExistentialDeposit, PoolAssets,
+	Runtime, RuntimeEvent, RuntimeOrigin, TreasuryAccount, AJUN, MILLI_AJUN,
+};
 use frame_support::{
 	ord_parameter_types,
 	pallet_prelude::{ConstU32, PalletInfoAccess},
