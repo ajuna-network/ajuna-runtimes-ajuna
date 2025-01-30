@@ -14,10 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-use crate::{
-	tx_payment, weights, AccountId, AssetConversion, Assets, Balance, Balances, ExistentialDeposit,
-	PoolAssets, Runtime, RuntimeEvent, RuntimeOrigin, AJUN, MILLI_AJUN,
-};
+use crate::{weights, AccountId, AssetConversion, Assets, Balance, Balances, ExistentialDeposit, PoolAssets, Runtime, RuntimeEvent, RuntimeOrigin, TreasuryAccount, AJUN, MILLI_AJUN};
 use frame_support::{
 	ord_parameter_types,
 	pallet_prelude::{ConstU32, PalletInfoAccess},
@@ -100,8 +97,13 @@ impl pallet_asset_registry::BenchmarkHelper<AssetIdForTrustBackedAssets>
 
 impl pallet_asset_conversion_tx_payment::Config for Runtime {
 	type RuntimeEvent = RuntimeEvent;
-	type Fungibles = NativeAndAssets;
-	type OnChargeAssetTransaction = tx_payment::SwapCreditAdapter<Native, AssetConversion>;
+	type AssetId = NativeOrWithId<AssetIdForTrustBackedAssets>;
+	type OnChargeAssetTransaction = pallet_asset_conversion_tx_payment::SwapAssetAdapter<
+		Native,
+		NativeAndAssets,
+		AssetConversion,
+		ResolveAssetTo<TreasuryAccount, NativeAndAssets>,
+	>;
 }
 
 impl pallet_asset_registry::Config for Runtime {
