@@ -35,7 +35,7 @@ use orml_traits::{
 	location::{RelativeReserveProvider, Reserve},
 	parameter_type_with_key,
 };
-use orml_xcm_support::IsNativeConcrete;
+use orml_xcm_support::{IsNativeConcrete, MultiNativeAsset};
 use pallet_xcm::XcmPassthrough;
 use parachains_common::{message_queue::ParaIdToSibling, AssetIdForTrustBackedAssets};
 use parity_scale_codec::{Decode, Encode, MaxEncodedLen};
@@ -53,13 +53,13 @@ use staging_xcm::latest::prelude::*;
 use staging_xcm_builder::CurrencyAdapter;
 use staging_xcm_builder::{
 	AccountId32Aliases, AllowKnownQueryResponses, AllowSubscriptionsFrom,
-	AllowTopLevelPaidExecutionFrom, AllowUnpaidExecutionFrom, DenyReserveTransferToRelayChain,
-	DenyThenTry, DescribeAllTerminal, DescribeFamily, EnsureXcmOrigin, FixedRateOfFungible,
-	FixedWeightBounds, FrameTransactionalProcessor, FungiblesAdapter, HashedDescription,
-	NativeAsset, NoChecking, ParentAsSuperuser, ParentIsPreset, RelayChainAsNative,
-	SiblingParachainAsNative, SiblingParachainConvertsVia, SignedAccountId32AsNative,
-	SignedToAccountId32, SovereignSignedViaLocation, TakeWeightCredit, TrailingSetTopicAsId,
-	WithComputedOrigin,
+	AllowTopLevelPaidExecutionFrom, AllowUnpaidExecutionFrom, Case,
+	DenyReserveTransferToRelayChain, DenyThenTry, DescribeAllTerminal, DescribeFamily,
+	EnsureXcmOrigin, FixedRateOfFungible, FixedWeightBounds, FrameTransactionalProcessor,
+	FungiblesAdapter, HashedDescription, NoChecking, ParentAsSuperuser, ParentIsPreset,
+	RelayChainAsNative, SiblingParachainAsNative, SiblingParachainConvertsVia,
+	SignedAccountId32AsNative, SignedToAccountId32, SovereignSignedViaLocation, TakeWeightCredit,
+	TrailingSetTopicAsId, WithComputedOrigin,
 };
 use staging_xcm_executor::{traits::JustTry, XcmExecutor};
 use xcm_primitives::{AsAssetLocation, ConvertedRegisteredAssetId};
@@ -322,13 +322,33 @@ parameter_types! {
 	pub RelayNativePerSecond: (AssetId, u128,u128) = (Location::new(1,Here).into(), AJUN * 70, 0u128);
 	// Weight for one XCM operation.
 	pub UnitWeightCost: Weight = Weight::from_parts(1_000_000u64, DEFAULT_PROOF_SIZE);
+
 	pub const AjunNative: AssetFilter = Wild(AllOf { fun: WildFungible, id: AssetId(Location::here()) });
 	pub AssetHubTrustedTeleporter: (AssetFilter, Location) = (AjunNative::get(), AssetHubLocation::get());
+
+	pub const RelayLocation: Location = Location::parent();
+	pub RelayLocationFilter: AssetFilter = Wild(AllOf {
+		fun: WildFungible,
+		id: AssetId(RelayLocation::get()),
+	});
+
+	/// Dot from Asset Hub
+	pub RelayChainNativeAssetFromAssetHub: (AssetFilter, Location) = (
+		RelayLocationFilter::get(),
+		AssetHubLocation::get()
+	);
 }
 
-pub type TrustedTeleporters = (staging_xcm_builder::Case<AssetHubTrustedTeleporter>,);
+pub type TrustedTeleporters = (Case<AssetHubTrustedTeleporter>,);
 
-pub type Reserves = (NativeAsset, ReserveAssetsFrom<AssetHubLocation>);
+type Reserves = (
+	// Assets bridged from different consensus systems held in reserve on Asset Hub.
+	IsBridgedConcreteAssetFrom<AssetHubLocation>,
+	// Relay chain (DOT) from Asset Hub
+	Case<RelayChainNativeAssetFromAssetHub>,
+	// Assets which the reserve is the same as the origin.
+	MultiNativeAsset<AbsoluteAndRelativeReserve<SelfLocationAbsolute>>,
+);
 
 /// The means for routing XCM messages which are not for local execution into the right message
 /// queues.
@@ -555,4 +575,21 @@ impl orml_xtokens::Config for Runtime {
 	type ReserveProvider = AbsoluteAndRelativeReserve<SelfLocationAbsolute>;
 	type RateLimiter = ();
 	type RateLimiterId = ();
+}
+
+/// Matches foreign assets from a given origin.
+/// Foreign assets are assets bridged from other consensus systems. i.e parents > 1.
+pub struct IsBridgedConcreteAssetFrom<Origin>(PhantomData<Origin>);
+impl<Origin> ContainsPair<Asset, Location> for IsBridgedConcreteAssetFrom<Origin>
+where
+	Origin: Get<Location>,
+{
+	fn contains(asset: &Asset, origin: &Location) -> bool {
+		let loc = Origin::get();
+		&loc == origin &&
+			matches!(
+				asset,
+				Asset { id: AssetId(Location { parents: 2, .. }), fun: Fungibility::Fungible(_) },
+			)
+	}
 }
