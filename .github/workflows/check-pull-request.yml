@@ -57,6 +57,7 @@ jobs:
           # consistent cache across jobs
           shared-key: "ajuna-cache-cargo-debug"
           cache-on-failure: true
+          prefix-key: "v1"
 
       - run: cargo clippy --workspace --all-features --all-targets -- -D warnings
         env:
@@ -148,6 +149,7 @@ jobs:
           # consistent cache across jobs
           shared-key: "ajuna-cache-cargo-release"
           cache-on-failure: true
+          prefix-key: "v1"
 
       - name: Build release binary
         run: cargo build --release --locked
@@ -175,6 +177,7 @@ jobs:
           # consistent cache across jobs
           shared-key: "ajuna-cache-cargo-test"
           cache-on-failure: true
+          prefix-key: "v1"
 
       - run: cargo test --release --all-features --all-targets
         env:

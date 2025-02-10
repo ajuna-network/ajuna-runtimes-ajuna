@@ -59,10 +59,11 @@ jobs:
         run: rustup show
 
       - name: Fetch cache
-        uses: Swatinem/rust-cache@a95ba195448af2da9b00fb742d14ffaaf3c21f43 # v2.7.0
+        uses: Swatinem/rust-cache@v2
         with:
           shared-key: "check-migrations-cache"
           cache-on-failure: true
+          prefix-key: "v1"
 
       - name: Build ${{ matrix.runtime.name }}
         run: |
