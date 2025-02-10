@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   runtime-matrix:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     outputs:
       runtime: ${{ steps.runtime.outputs.runtime }}
     name: Extract tasks from matrix
@@ -37,7 +37,7 @@ jobs:
   check-migrations:
     needs: [ runtime-matrix ]
     continue-on-error: true
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         runtime: ${{ fromJSON(needs.runtime-matrix.outputs.runtime) }}

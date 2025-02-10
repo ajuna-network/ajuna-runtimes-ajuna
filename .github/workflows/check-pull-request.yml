@@ -31,7 +31,7 @@ env:
 jobs:
   fmt:
     name: Rustfmt
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     container:
       # contains the nightly-toolchain
       image: docker.io/paritytech/ci-unified:bullseye-1.75.0-2024-01-22-v20240109
@@ -43,7 +43,7 @@ jobs:
 
   lint:
     name: Clippy
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     continue-on-error: false
     steps:
       - uses: actions/checkout@v4
@@ -64,7 +64,7 @@ jobs:
 
   cargo-zepter:
     name: Cargo Zepter
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Install stable Rust
@@ -86,7 +86,7 @@ jobs:
 
   build-runtimes:
     name: Build Runtimes
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         runtime: [ "ajuna" ]
@@ -133,7 +133,7 @@ jobs:
 
   build-binary:
     name: Build Release Binary
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     continue-on-error: false
 
     steps:
@@ -160,7 +160,7 @@ jobs:
 
   test:
     name: Cargo test (all features)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     continue-on-error: false
 
     steps:
@@ -183,7 +183,7 @@ jobs:
 
   zombienet-tests:
     name: Zombienet tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [ build-binary ]
     strategy:
       matrix:
@@ -225,7 +225,7 @@ jobs:
   publish-release:
     name: Publish Release
     if: startsWith(github.ref, 'refs/tags/')
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [ build-binary ]
     outputs:
       release_url: ${{ steps.create-release.outputs.html_url }}
@@ -304,7 +304,7 @@ jobs:
     name: Publish Runtimes
     needs: [ publish-release ]
     continue-on-error: true
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         runtime: [ ajuna ]

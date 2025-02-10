@@ -8,7 +8,7 @@ on:
 jobs:
   release-docker:
     name: Push to Dockerhub
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
 
@@ -55,7 +55,7 @@ jobs:
 
   release-onf:
     needs: release-docker
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         runtime: [ ajuna ]
