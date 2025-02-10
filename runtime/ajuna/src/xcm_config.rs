@@ -344,7 +344,7 @@ pub type TrustedTeleporters = (Case<AssetHubTrustedTeleporter>,);
 // This is only the xcm config. XCMs transferring assets that are not
 // registered in the AssetRegistry will fail and trap the asset.
 type Reserves = (
-	// We accept native assets in general.
+	// We accept native assets in general
 	NativeAsset,
 	// Relay chain (DOT) from Asset Hub
 	Case<RelayChainNativeAssetFromAssetHub>,
