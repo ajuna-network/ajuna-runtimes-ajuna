@@ -35,7 +35,7 @@ use orml_traits::{
 	location::{RelativeReserveProvider, Reserve},
 	parameter_type_with_key,
 };
-use orml_xcm_support::{IsNativeConcrete, MultiNativeAsset};
+use orml_xcm_support::IsNativeConcrete;
 use pallet_xcm::XcmPassthrough;
 use parachains_common::{message_queue::ParaIdToSibling, AssetIdForTrustBackedAssets};
 use parity_scale_codec::{Decode, Encode, MaxEncodedLen};
