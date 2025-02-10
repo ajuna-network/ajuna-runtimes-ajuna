@@ -1,4 +1,4 @@
-FROM phusion/baseimage:jammy-1.0.1
+FROM phusion/baseimage:jammy-1.0.4
 LABEL description="This is the 2nd stage: a very small image where we copy the node binary."
 
 RUN apt-get update && \
