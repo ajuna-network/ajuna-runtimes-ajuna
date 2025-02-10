@@ -578,20 +578,3 @@ impl orml_xtokens::Config for Runtime {
 	type RateLimiter = ();
 	type RateLimiterId = ();
 }
-
-/// Matches foreign assets from a given origin.
-/// Foreign assets are assets bridged from other consensus systems. i.e parents > 1.
-pub struct IsBridgedConcreteAssetFrom<Origin>(PhantomData<Origin>);
-impl<Origin> ContainsPair<Asset, Location> for IsBridgedConcreteAssetFrom<Origin>
-where
-	Origin: Get<Location>,
-{
-	fn contains(asset: &Asset, origin: &Location) -> bool {
-		let loc = Origin::get();
-		&loc == origin &&
-			matches!(
-				asset,
-				Asset { id: AssetId(Location { parents: 2, .. }), fun: Fungibility::Fungible(_) },
-			)
-	}
-}
