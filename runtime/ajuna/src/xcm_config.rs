@@ -342,12 +342,10 @@ parameter_types! {
 pub type TrustedTeleporters = (Case<AssetHubTrustedTeleporter>,);
 
 type Reserves = (
-	// Assets bridged from different consensus systems held in reserve on Asset Hub.
-	IsBridgedConcreteAssetFrom<AssetHubLocation>,
 	// Relay chain (DOT) from Asset Hub
 	Case<RelayChainNativeAssetFromAssetHub>,
-	// Assets which the reserve is the same as the origin.
-	MultiNativeAsset<AbsoluteAndRelativeReserve<SelfLocationAbsolute>>,
+	// Assets for which the reserve is asset hub
+	ReserveAssetsFrom<AssetHubLocation>,
 );
 
 /// The means for routing XCM messages which are not for local execution into the right message
