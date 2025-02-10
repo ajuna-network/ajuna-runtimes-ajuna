@@ -31,7 +31,7 @@ env:
 jobs:
   fmt:
     name: Rustfmt
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     container:
       # contains the nightly-toolchain
       image: docker.io/paritytech/ci-unified:bullseye-1.75.0-2024-01-22-v20240109
@@ -43,7 +43,7 @@ jobs:
 
   lint:
     name: Clippy
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     continue-on-error: false
     steps:
       - uses: actions/checkout@v4
@@ -57,6 +57,7 @@ jobs:
           # consistent cache across jobs
           shared-key: "ajuna-cache-cargo-debug"
           cache-on-failure: true
+          prefix-key: "v1"
 
       - run: cargo clippy --workspace --all-features --all-targets -- -D warnings
         env:
@@ -64,7 +65,7 @@ jobs:
 
   cargo-zepter:
     name: Cargo Zepter
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Install stable Rust
@@ -86,7 +87,7 @@ jobs:
 
   build-runtimes:
     name: Build Runtimes
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         runtime: [ "ajuna" ]
@@ -133,7 +134,7 @@ jobs:
 
   build-binary:
     name: Build Release Binary
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     continue-on-error: false
 
     steps:
@@ -148,6 +149,7 @@ jobs:
           # consistent cache across jobs
           shared-key: "ajuna-cache-cargo-release"
           cache-on-failure: true
+          prefix-key: "v1"
 
       - name: Build release binary
         run: cargo build --release --locked
@@ -160,7 +162,7 @@ jobs:
 
   test:
     name: Cargo test (all features)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     continue-on-error: false
 
     steps:
@@ -175,6 +177,7 @@ jobs:
           # consistent cache across jobs
           shared-key: "ajuna-cache-cargo-test"
           cache-on-failure: true
+          prefix-key: "v1"
 
       - run: cargo test --release --all-features --all-targets
         env:
@@ -183,7 +186,7 @@ jobs:
 
   zombienet-tests:
     name: Zombienet tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [ build-binary ]
     strategy:
       matrix:
@@ -225,7 +228,7 @@ jobs:
   publish-release:
     name: Publish Release
     if: startsWith(github.ref, 'refs/tags/')
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [ build-binary ]
     outputs:
       release_url: ${{ steps.create-release.outputs.html_url }}
@@ -304,7 +307,7 @@ jobs:
     name: Publish Runtimes
     needs: [ publish-release ]
     continue-on-error: true
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         runtime: [ ajuna ]
