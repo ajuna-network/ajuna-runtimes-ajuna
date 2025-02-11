@@ -56,8 +56,8 @@ use staging_xcm_builder::{
 	AllowTopLevelPaidExecutionFrom, AllowUnpaidExecutionFrom, Case,
 	DenyReserveTransferToRelayChain, DenyThenTry, DescribeAllTerminal, DescribeFamily,
 	EnsureXcmOrigin, FixedRateOfFungible, FixedWeightBounds, FrameTransactionalProcessor,
-	FungiblesAdapter, HashedDescription, NativeAsset, NoChecking, ParentAsSuperuser,
-	ParentIsPreset, RelayChainAsNative, SiblingParachainAsNative, SiblingParachainConvertsVia,
+	FungiblesAdapter, HashedDescription, NoChecking, ParentAsSuperuser, ParentIsPreset,
+	RelayChainAsNative, SiblingParachainAsNative, SiblingParachainConvertsVia,
 	SignedAccountId32AsNative, SignedToAccountId32, SovereignSignedViaLocation, TakeWeightCredit,
 	TrailingSetTopicAsId, WithComputedOrigin,
 };
@@ -344,8 +344,6 @@ pub type TrustedTeleporters = (Case<AssetHubTrustedTeleporter>,);
 // This is only the xcm config. XCMs transferring assets that are not
 // registered in the AssetRegistry will fail and trap the asset.
 type Reserves = (
-	// We accept native assets in general
-	NativeAsset,
 	// Relay chain (DOT) from Asset Hub
 	Case<RelayChainNativeAssetFromAssetHub>,
 	// Assets for which the reserve is asset hub
